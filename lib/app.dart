@@ -6,6 +6,15 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: HomePage());
+    return MaterialApp(
+      title: 'FlameRewards',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorSchemeSeed: const Color(0xFFFF4E1A),
+        useMaterial3: true,
+        scaffoldBackgroundColor: const Color(0xFFFFF8F5),
+      ),
+      home: const HomePage(),
+    );
   }
 }
