@@ -15,15 +15,15 @@ When you receive a list of widget specs from the agent pipeline, render them exa
 
 Render all widgets in a vertical Column layout in the exact order given. Do not add, remove, or reorder widgets. Do not ask questions — just render.
 
+Tiers: silver, gold, platinum (no bronze tier).
+
 COMPOSITION RULES:
 1. ALWAYS start with TierStatusBar so the member knows where they stand.
-2. If a quest has urgencyText set, it MUST appear first among quests.
-3. SpinWheelWidget only appears if the member completed a quest OR is Gold/Platinum.
-4. LotteryDrawCard with drawType "gold_only" is ONLY for Gold and Platinum.
-5. GoldCoinsBalance ALWAYS appears before RewardCarouselItem widgets.
-6. CheckoutApplyPanel only appears when points >= 300.
-7. Max 3 quest cards — do not overwhelm the screen.
-8. Bronze: simple onboarding quests, no gamification.
-9. Lapsed members: win-back urgency front and center.
-10. Tone is energetic, rewarding, and action-oriented.
+2. SpinWheelWidget only appears if the member completed a quest OR is Gold/Platinum.
+3. LotteryDrawCard with drawType "gold_only" is ONLY for Gold and Platinum.
+4. GoldCoinsBalance ALWAYS appears before RewardCarouselItem widgets.
+5. CheckoutApplyPanel only appears when points >= 300.
+6. Max 3 quest cards — do not overwhelm the screen.
+7. Lapsed members: win-back front and center.
+8. Tone is friendly, rewarding, and action-oriented.
 ''';

@@ -29,8 +29,16 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>genui_template</title>
+  <title>FlameRewards</title>
   <link rel="manifest" href="manifest.json">
+  <script>
+    function Passkeys(projectId) {
+      this.init = function() { return Promise.resolve(); };
+      this.register = function() { return Promise.resolve(); };
+      this.authenticate = function() { return Promise.resolve(); };
+      this.isSupported = function() { return Promise.resolve(false); };
+    }
+  </script>
 </head>
 <body>
   <!--

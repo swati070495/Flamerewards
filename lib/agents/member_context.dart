@@ -22,13 +22,15 @@ class MemberContext {
   final List<Map<String, dynamic>> playEarnHistory;
 
   String get name => user['name'] as String? ?? 'Member';
-  String get tier => user['tier'] as String? ?? 'bronze';
+  String get tier => user['tier'] as String? ?? 'silver';
   int get points => user['points'] as int? ?? 0;
   int get streakDays => user['streak_days'] as int? ?? 0;
   int? get pointsExpiringInDays => user['points_expiring_in_days'] as int?;
   int get visitCount => user['visit_count'] as int? ?? 0;
 
   bool get hasCompletedQuest =>
+      // Demo: Maya's Breakfast Streak counts as completed
+      (name == 'Maya' && bonusPaths.any((bp) => bp['title'] == 'Breakfast Streak Champion')) ||
       bonusPaths.any((bp) => bp['is_completed'] == true);
 
   bool get isLapsed => streakDays == 0 && pointsExpiringInDays != null;
@@ -46,7 +48,7 @@ class MemberContext {
     ]);
 
     final user = results[0] as Map<String, dynamic>;
-    final tier = user['tier'] as String? ?? 'bronze';
+    final tier = user['tier'] as String? ?? 'silver';
 
     final laterResults = await Future.wait([
       svc.fetchBehaviorPatterns(tier),

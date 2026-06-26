@@ -52,7 +52,6 @@ int _int(Map<String, Object?>? d, String key, [int fallback = 0]) {
 }
 
 Color _tierColor(String tier) => switch (tier.toLowerCase()) {
-  'bronze' => const Color(0xFFCD7F32),
   'silver' => const Color(0xFFC0C0C0),
   'gold' => const Color(0xFFFFD700),
   'platinum' => const Color(0xFFE5E4E2),
@@ -203,7 +202,7 @@ final _tierStatusBar = CatalogItem(
     properties: {
       'currentTier': S.string(
         description: 'Member tier',
-        enumValues: ['bronze', 'silver', 'gold', 'platinum'],
+        enumValues: ['silver', 'gold', 'platinum'],
       ),
       'pointsToNext': S.integer(
         description: 'Points needed for next tier',
@@ -214,11 +213,10 @@ final _tierStatusBar = CatalogItem(
   ),
   widgetBuilder: (itemContext) {
     final d = itemContext.data as Map<String, Object?>?;
-    final tier = _str(d, 'currentTier', 'bronze');
+    final tier = _str(d, 'currentTier', 'silver');
     final color = _tierColor(tier);
     final pts = _int(d, 'pointsToNext');
     final tierEmoji = switch (tier.toLowerCase()) {
-      'bronze' => '\u{1F949}',
       'silver' => '\u{1F948}',
       'gold' => '\u{1F947}',
       'platinum' => '\u{1F48E}',

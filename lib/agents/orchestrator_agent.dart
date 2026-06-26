@@ -22,9 +22,10 @@ class OrchestratorAgent {
 You are the FlameRewards Orchestrator for McDonald's loyalty.
 Given a McDonald's loyalty member's profile and buying behavior, decide which agents to invoke and in what order.
 
+Tiers: silver, gold, platinum.
+
 Rules:
-- Bronze member with no completed quests: invoke ["quest"] only
-- Silver lapsed member (streakDays=0, pointsExpiringInDays is set): invoke ["reward", "quest"] — reward urgency first
+- Silver member: invoke ["quest", "reward"]
 - Gold member with completed quest: invoke ["quest", "play_earn", "reward"]
 - Gold member no completed quest: invoke ["quest", "reward"]
 - Platinum member: invoke ["quest", "play_earn", "reward"]
@@ -35,13 +36,12 @@ Layout options:
 - game_first: for members who just completed a quest
 
 Tone options:
-- urgency: when points or streak expiring in < 3 days
-- onboarding: for bronze/new members
+- friendly: default welcoming tone
 - celebration: for members who completed quests
 - winback: for lapsed members with no streak
 
 Respond ONLY with valid JSON, no markdown, no explanation:
-{"agents": ["quest", "play_earn", "reward"], "layout": "quest_first", "tone": "urgency", "reasoning": "one sentence why"}
+{"agents": ["quest", "play_earn", "reward"], "layout": "quest_first", "tone": "friendly", "reasoning": "one sentence why"}
 ''';
 
   static Future<AgentPlan> plan(MemberContext member) async {
@@ -61,30 +61,22 @@ Respond ONLY with valid JSON, no markdown, no explanation:
       return AgentPlan(
         agents: List<String>.from(json['agents'] as List),
         layout: json['layout'] as String? ?? 'quest_first',
-        tone: json['tone'] as String? ?? 'onboarding',
+        tone: json['tone'] as String? ?? 'friendly',
         reasoning: json['reasoning'] as String? ?? '',
       );
     } catch (_) {
       // Fallback plan based on tier
-      return _fallbackPlan(member);
+      return fallbackPlan(member);
     }
   }
 
-  static AgentPlan _fallbackPlan(MemberContext member) {
-    if (member.tier == 'bronze') {
-      return AgentPlan(
-        agents: ['quest'],
-        layout: 'quest_first',
-        tone: 'onboarding',
-        reasoning: 'New bronze member — onboarding quests only',
-      );
-    }
+  static AgentPlan fallbackPlan(MemberContext member) {
     if (member.isLapsed) {
       return AgentPlan(
         agents: ['reward', 'quest'],
         layout: 'reward_first',
         tone: 'winback',
-        reasoning: 'Lapsed member — lead with reward urgency',
+        reasoning: 'Lapsed member — lead with rewards',
       );
     }
     if (member.hasCompletedQuest) {
@@ -98,7 +90,7 @@ Respond ONLY with valid JSON, no markdown, no explanation:
     return AgentPlan(
       agents: ['quest', 'reward'],
       layout: 'quest_first',
-      tone: 'urgency',
+      tone: 'friendly',
       reasoning: 'Active member — quests and rewards',
     );
   }
