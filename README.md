@@ -1,8 +1,10 @@
-# FlameRewards - McDonald's GenUI Loyalty App
+# FlameRewards - AI-Powered Loyalty Platform
 
-> Built at Flutter SF Hackathon 2026
+> Built at Flutter SF Hackathon 2026 | Demonstrated with McDonald's
 
-A McDonald's loyalty rewards app where the UI generates itself. Instead of static screens, AI agents read real customer data and compose personalized quest challenges, rewards, and gamification experiences in real-time.
+An AI-powered loyalty platform where the UI generates itself. Instead of static screens, AI agents read real customer data and compose personalized quest challenges, rewards, and gamification experiences in real-time.
+
+**McDonald's is used as an example retailer.** The underlying platform is retailer-agnostic — the same multi-agent architecture works for any QSR, retail, grocery, coffee chain, or subscription brand. Swap the menu items, tier names, and branding, and the AI pipeline generates personalized loyalty experiences for any business.
 
 ## What Makes This Different
 
@@ -192,6 +194,21 @@ Each persona switch generates fresh quests. Tap Replay to see different ones.
 | Priya | 1 | Quest generation (behavior + cohort) |
 
 All other agents (Orchestrator, PlayEarn, Reward) use pure Dart — no LLM needed.
+
+## Platform, Not Just an App
+
+FlameRewards is a **loyalty platform**, not a McDonald's-specific app. McDonald's is used as the demo retailer, but the architecture is designed to work for any brand:
+
+| Component | What to Swap | Example |
+|-----------|-------------|---------|
+| Menu items | Product catalog in Supabase + Order tab | Starbucks drinks, Nike shoes, Sephora products |
+| Tier names | `users.tier` column | Green/Gold/Platinum (Starbucks), Member/VIP/Elite |
+| Behavior patterns | `behavior_patterns` table | "Coffee buyers who add food", "Sneaker buyers who browse apparel" |
+| Quest logic | LLM system prompt in `quest_agent.dart` | "Try a new drink size", "Complete your first online order" |
+| Branding | Colors and emoji in `home_page.dart` | Green theme for Starbucks, black for Nike |
+| Points economy | Menu item costs in Order tab | Stars (Starbucks), Points (generic) |
+
+**The AI pipeline doesn't change.** The same agents read purchase history, cross-reference cohort patterns, and generate personalized quests — regardless of whether the product is a Big Mac or a latte.
 
 ## Credits
 
