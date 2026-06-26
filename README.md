@@ -12,6 +12,24 @@ Traditional loyalty apps show the same quests to every user. FlameRewards uses a
 
 No one wrote that quest. The AI composed it from behavior + cohort signals.
 
+## Screenshots
+
+<p align="center">
+  <img src="screenshots/jake_quiz_full.png" width="230" alt="Jake Onboarding Quiz" />
+  <img src="screenshots/jake_home.png" width="230" alt="Jake Cold Start Home" />
+  <img src="screenshots/jake_quests.png" width="230" alt="Jake AI Quests" />
+</p>
+
+<p align="center">
+  <img src="screenshots/maya_home.png" width="230" alt="Maya Gold Home" />
+  <img src="screenshots/maya_bottomsheet.png" width="230" alt="Maya Quest Bottom Sheet" />
+  <img src="screenshots/order_tab.png" width="230" alt="Order Tab Points Breakdown" />
+</p>
+
+<p align="center">
+  <img src="screenshots/priya_home.png" width="230" alt="Priya Platinum Home" />
+</p>
+
 ## Demo
 
 3 personas pull real data from Supabase:
