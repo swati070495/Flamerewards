@@ -77,7 +77,7 @@ final _questCard = CatalogItem(
       ),
       'rewardType': S.string(
         description: 'Type of reward',
-        enumValues: ['spin_wheel', 'free_item', 'bonus_points', 'subscription'],
+        enumValues: ['spin_wheel', 'free_item', 'bonus_points', 'subscription', '2x_points'],
       ),
     },
     required: ['title', 'progressValue', 'progressLabel', 'rewardText'],
