@@ -63,6 +63,11 @@ class _HomePageState extends State<HomePage> {
   bool _showQuiz = false;
   bool _coldStartBanner = false;
 
+  // ── Preload Cache ──
+  final _memberCache = <String, MemberContext>{};
+  final _widgetCache = <String, List<Map<String, dynamic>>>{};
+  bool _preloaded = false;
+
   @override
   void initState() {
     super.initState();
@@ -72,7 +77,10 @@ class _HomePageState extends State<HomePage> {
   Future<void> _initSupabase() async {
     try {
       await SupabaseService.instance.initialize();
+      // Show Jake immediately (quiz, no LLM needed)
       await _switchPersona(0);
+      // Preload Maya and Priya in background
+      _preloadAll();
     } catch (e) {
       if (mounted) {
         setState(() => _error = 'Supabase init failed: $e');
@@ -80,7 +88,73 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> _preloadAll() async {
+    try {
+      // Load all 3 member contexts in parallel
+      final futures = _personas.map((p) async {
+        final member = await MemberContext.forPersona(p.name);
+        _memberCache[p.name] = member;
+        return member;
+      }).toList();
+      final members = await Future.wait(futures);
+
+      // Run quest pipelines for Maya and Priya in parallel (skip Jake — he gets quiz)
+      final pipelineFutures = <Future>[];
+      for (var i = 0; i < members.length; i++) {
+        final name = _personas[i].name;
+        if (name == 'Jake') continue; // Jake uses quiz flow
+        pipelineFutures.add(() async {
+          final widgets = await AgentPipeline.composeWidgets(members[i]);
+          _widgetCache[name] = widgets;
+        }());
+      }
+      await Future.wait(pipelineFutures);
+      _preloaded = true;
+      debugPrint('***** Preload complete: ${_memberCache.keys} members, ${_widgetCache.keys} widgets cached');
+    } catch (e) {
+      debugPrint('***** Preload error (non-fatal): $e');
+    }
+  }
+
   Future<void> _switchPersona(int index) async {
+    final name = _personas[index].name;
+
+    // Check cache first
+    if (_memberCache.containsKey(name)) {
+      final member = _memberCache[name]!;
+
+      // Jake with quiz flow
+      if (name == 'Jake' && member.orderHistory.length < 5) {
+        setState(() {
+          _selectedPersona = index;
+          _bottomNavIndex = 0;
+          _memberContext = member;
+          _widgets = null;
+          _error = null;
+          _loading = false;
+          _showQuiz = true;
+          _coldStartBanner = false;
+        });
+        return;
+      }
+
+      // Use cached widgets if available
+      if (_widgetCache.containsKey(name)) {
+        setState(() {
+          _selectedPersona = index;
+          _bottomNavIndex = 0;
+          _memberContext = member;
+          _widgets = _widgetCache[name];
+          _error = null;
+          _loading = false;
+          _showQuiz = false;
+          _coldStartBanner = false;
+        });
+        return;
+      }
+    }
+
+    // Fallback: load fresh (first load or cache miss)
     setState(() {
       _selectedPersona = index;
       _bottomNavIndex = 0;
@@ -92,14 +166,14 @@ class _HomePageState extends State<HomePage> {
     });
 
     try {
-      final member = await MemberContext.forPersona(
-        _personas[index].name,
-      );
+      final member = _memberCache[name] ??
+          await MemberContext.forPersona(name);
+      _memberCache[name] = member;
 
       if (!mounted) return;
       setState(() => _memberContext = member);
 
-      if (_personas[index].name == 'Jake' && member.orderHistory.length < 5) {
+      if (name == 'Jake' && member.orderHistory.length < 5) {
         setState(() {
           _loading = false;
           _showQuiz = true;
@@ -108,6 +182,7 @@ class _HomePageState extends State<HomePage> {
       }
 
       final widgetSpecs = await AgentPipeline.composeWidgets(member);
+      _widgetCache[name] = widgetSpecs;
 
       if (!mounted) return;
       setState(() {
